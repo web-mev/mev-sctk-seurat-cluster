@@ -1,4 +1,4 @@
-suppressMessages(suppressWarnings(library(singleCellTK)))
+suppressMessages(suppressWarnings(library(c("singleCellTK", "Matrix"))))
 
 # args from command line:
 args <- commandArgs(TRUE)
@@ -24,11 +24,9 @@ counts <- read.table(
     sep = "\t",
     row.names = 1
 )
+counts <- as(as.matrix(counts), "sparseMatrix")
 
 # Create an SCE object from the counts
-# ToDo: Convert the flat matrix to sparse
-# Warning: following processing steps will fail with Seurat because data
-# exists as a flat matrix and not sparse.
 sce <- SingleCellExperiment(
     assays=list(counts=counts)
 )
@@ -56,8 +54,11 @@ sce <- seuratFindClusters(
 )
 
 # Create a data frame from the Seurat factors in the SCE object
+# cell_barcode directly referencing the counts colnames is a bit of a hack
+# No guarantee order was preserved in the creation of the 
+# SingleCellExperiment() object.
 df.seurat <- data.frame(
-    cell_barcode = as.vector(sce$cell_barcode),
+    cell_barcode = as.vector(colnames(counts)),
     seurat_cluster = as.vector(sce$Seurat_louvain_Resolution0.8)
 )
 
