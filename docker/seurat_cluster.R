@@ -19,16 +19,16 @@ setwd(working_dir)
 #     sep = "\t",
 #     quote = FALSE
 # )
-counts <- read.table(
+cnts <- read.table(
     file = RAW_COUNT_MATRIX,
     sep = "\t",
     row.names = 1
 )
-counts <- as(as.matrix(counts), "sparseMatrix")
+cnts <- as(as.matrix(cnts), "sparseMatrix")
 
 # Create an SCE object from the counts
 sce <- SingleCellExperiment(
-    assays=list(counts=counts)
+    assays=list(counts=cnts)
 )
 
 # Pre-process the SCE object
@@ -58,7 +58,7 @@ sce <- seuratFindClusters(
 # No guarantee order was preserved in the creation of the 
 # SingleCellExperiment() object.
 df.seurat <- data.frame(
-    cell_barcode = as.vector(colnames(counts)),
+    cell_barcode = as.vector(colnames(cnts)),
     seurat_cluster = as.vector(sce$Seurat_louvain_Resolution0.8)
 )
 
