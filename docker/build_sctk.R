@@ -1,1 +1,0 @@
-devtools::install_github("compbiomed/singleCellTK@v2.0.0")

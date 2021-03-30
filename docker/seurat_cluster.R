@@ -1,9 +1,11 @@
-suppressMessages(suppressWarnings(library(c("singleCellTK", "Matrix"))))
+suppressMessages(suppressWarnings(library("singleCellTK")))
+suppressMessages(suppressWarnings(library("Matrix")))
 
 # args from command line:
 args <- commandArgs(TRUE)
 RAW_COUNT_MATRIX <- args[1]
-OUTPUT_UMAP_BASE <- 'umap_matrix.tsv'
+DIMS <- as.integer(args[2])
+OUTPUT_CLUSTER_MAPPING <- 'seurat_clusters.tsv'
 
 # change the working directory to co-locate with the counts file:
 working_dir <- dirname(RAW_COUNT_MATRIX)
@@ -32,23 +34,21 @@ sce <- SingleCellExperiment(
 )
 
 # Pre-process the SCE object
-sce <- scater_logNormCounts(sce, "logcounts")
 # Go through the Seurat curated workflow to get basic 
 # scaled assay and dimension reduction
 # Because Seurat is a 3rd party package, it requires manually calling
 # much of the necessary pre-processing.
 sce <- seuratNormalizeData(inSCE = sce, useAssay = "counts")
 sce <- seuratFindHVG(inSCE = sce, useAssay = "seuratNormData")
-sce <- seuratScaleData(inSCE = sce, useAssay = "seuratNormData")
-sce <- seuratPCA(inSCE = sce, useAssay = "seuratScaledData")
-sce <- seuratRunUMAP(sce)
+sce <- seuratSCTransform(inSCE = sce, normAssayName = "SCTCounts", useAssay = "counts")
+sce <- seuratPCA(inSCE = sce, useAssay = "SCTCounts", nPCs=DIMS)
 
 # Find the clusters with Seurat
 sce <- seuratFindClusters(
     inSCE = sce, 
-    useAssay = "seuratScaledData",
+    useAssay = "SCTCounts",
     useReduction = "pca",
-    dims = 10, # How many components to use for clusters
+    dims = DIMS, # How many components to use for clusters
     algorithm = "louvain", # probably best to leave alone
     resolution = 0.8
 )
@@ -62,12 +62,7 @@ df.seurat <- data.frame(
     seurat_cluster = as.vector(sce$Seurat_louvain_Resolution0.8)
 )
 
-# Write to file
-output_filename <- paste(
-    working_dir, 
-    OUTPUT_UMAP_BASE, 
-    sep='/'
-)
+output_filename <- paste(working_dir, OUTPUT_CLUSTER_MAPPING, sep='/')
 write.table(
     df.seurat, 
     output_filename, 
@@ -75,3 +70,8 @@ write.table(
     quote=F, 
     row.names = FALSE
 )
+
+# to work with MEV, need to create an outputs file
+json_str = paste0('{"seurat_clusters":"', output_filename, '"}')
+output_json <- paste(working_dir, 'outputs.json', sep='/')
+write(json_str, output_json)

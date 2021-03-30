@@ -1,0 +1,5 @@
+{
+    "raw_counts":"api.converters.data_resource.LocalDockerSingleDataResourceConverter", 
+    "pca_dims": "api.converters.basic_attributes.IntegerConverter"
+}
+  
