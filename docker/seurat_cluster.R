@@ -24,7 +24,8 @@ setwd(working_dir)
 cnts <- read.table(
     file = RAW_COUNT_MATRIX,
     sep = "\t",
-    row.names = 1
+    row.names = 1,
+    header=T
 )
 cnts <- as(as.matrix(cnts), "sparseMatrix")
 
