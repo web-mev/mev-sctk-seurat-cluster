@@ -5,11 +5,7 @@ suppressMessages(suppressWarnings(library("Matrix")))
 args <- commandArgs(TRUE)
 RAW_COUNT_MATRIX <- args[1]
 DIMS <- as.integer(args[2])
-OUTPUT_CLUSTER_MAPPING <- 'seurat_clusters.tsv'
-
-# change the working directory to co-locate with the counts file:
-working_dir <- dirname(RAW_COUNT_MATRIX)
-setwd(working_dir)
+OUTPUT_CLUSTER_MAPPING <- args[3]
 
 # Import counts as a data.frame
 # expects the data frame write output as:
@@ -63,16 +59,10 @@ df.seurat <- data.frame(
     seurat_cluster = as.vector(sce$Seurat_louvain_Resolution0.8)
 )
 
-output_filename <- paste(working_dir, OUTPUT_CLUSTER_MAPPING, sep='/')
 write.table(
     df.seurat, 
-    output_filename, 
+    OUTPUT_CLUSTER_MAPPING, 
     sep='\t', 
     quote=F, 
     row.names = FALSE
 )
-
-# to work with MEV, need to create an outputs file
-json_str = paste0('{"seurat_clusters":"', output_filename, '"}')
-output_json <- paste(working_dir, 'outputs.json', sep='/')
-write(json_str, output_json)
