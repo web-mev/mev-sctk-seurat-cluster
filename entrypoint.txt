@@ -1,1 +1,0 @@
-Rscript /opt/software/seurat_cluster.R {{raw_counts}} {{pca_dims}}

@@ -1,0 +1,4 @@
+{
+  "SctkSeuratCluster.pca_dims": "Int",
+  "SctkSeuratCluster.raw_counts": "File"
+}
