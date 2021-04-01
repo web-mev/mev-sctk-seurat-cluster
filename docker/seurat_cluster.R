@@ -1,11 +1,14 @@
 suppressMessages(suppressWarnings(library("singleCellTK")))
 suppressMessages(suppressWarnings(library("Matrix")))
+suppressMessages(suppressWarnings(library("dplyr")))
+suppressMessages(suppressWarnings(library("rjson", character.only=T, warn.conflicts = F, quietly = T)))
 
 # args from command line:
 args <- commandArgs(TRUE)
 RAW_COUNT_MATRIX <- args[1]
 DIMS <- as.integer(args[2])
 OUTPUT_CLUSTER_MAPPING <- args[3]
+CLUSTER_COUNTS <- args[4]
 
 # Import counts as a data.frame
 # expects the data frame write output as:
@@ -66,3 +69,9 @@ write.table(
     quote=F, 
     row.names = FALSE
 )
+
+# count the number in each cluster for summary
+count.df = df.seurat %>% count(seurat_cluster)
+j = toJSON(setNames(count.df$n, count.df$seurat_cluster))
+write(j, CLUSTER_COUNTS)
+

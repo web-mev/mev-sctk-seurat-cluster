@@ -14,6 +14,7 @@ workflow SctkSeuratCluster {
 
     output {
         File seurat_output = runSeurat.fout
+        File cluster_counts = runSeurat.cluster_counts
     }
 }
 
@@ -22,15 +23,17 @@ task runSeurat {
     Int pca_dims
 
     String output_name = 'seurat_cluster.tsv'
+    String cluster_counts_name = 'cluster_counts.json'
 
     Int disk_size = 20
 
     command {
-        Rscript /opt/software/seurat_cluster.R ${raw_counts} ${pca_dims} ${output_name}
+        Rscript /opt/software/seurat_cluster.R ${raw_counts} ${pca_dims} ${output_name} ${cluster_counts_name}
     }
 
     output {
         File fout = "${output_name}"
+        File cluster_counts = "${cluster_counts_name}"
     }
 
     runtime {

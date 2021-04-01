@@ -29,6 +29,13 @@
                 "resource_type": "ANN",
                 "many": false
             }
+        },
+        "SctkSeuratCluster.cluster_counts": {
+            "spec": {
+                "attribute_type": "DataResource", 
+                "resource_type": "JSON",
+                "many": false
+            }
         }
     }, 
     "mode": "cromwell",
