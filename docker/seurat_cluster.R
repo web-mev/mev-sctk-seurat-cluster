@@ -24,8 +24,24 @@ cnts <- read.table(
     file = RAW_COUNT_MATRIX,
     sep = "\t",
     row.names = 1,
-    header=T
+    header=T,
+    check.names = FALSE
 )
+
+# above, we set check.names=F to prevent the mangling of the sample names.
+# Now, we stash those original sample names and run make.names, so that any downstream
+# functions, etc. don't run into trouble. In the end, we convert back to the original names
+orig_cols = colnames(cnts)
+new_colnames = make.names(orig_cols)
+colnames(cnts) = new_colnames
+
+colname_mapping = data.frame(
+    orig_names = orig_cols,
+    adjusted_names=new_colnames,
+    stringsAsFactors=F
+)
+
+
 cnts <- as(as.matrix(cnts), "sparseMatrix")
 
 # Create an SCE object from the counts
@@ -61,9 +77,11 @@ df.seurat <- data.frame(
     cell_barcode = as.vector(colnames(cnts)),
     seurat_cluster = as.vector(sce$Seurat_louvain_Resolution0.8)
 )
-
+m = merge(df.seurat, colname_mapping, by.x = 'cell_barcode', by.y='adjusted_names')
+m = m[,c('orig_names','seurat_cluster')]
+colnames(m) = c('cell_barcode','seurat_cluster')
 write.table(
-    df.seurat, 
+    m, 
     OUTPUT_CLUSTER_MAPPING, 
     sep='\t', 
     quote=F, 
