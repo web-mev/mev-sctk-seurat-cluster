@@ -37,7 +37,7 @@ task runSeurat {
     }
 
     runtime {
-        docker: "hsphqbrc/mev-sctk-seurat-cluster"
+        docker: "ghcr.io/web-mev/mev-sctk-seurat-cluster"
         cpu: 2
         memory: "12 G"
         disks: "local-disk " + disk_size + " HDD"
