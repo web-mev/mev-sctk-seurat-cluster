@@ -2,7 +2,7 @@
     "name": "Seurat clustering", 
     "description": "Run the Seurat clustering algorithm on your single-cell data. Prior to clustering, this uses principal-component analysis (PCA) to reduce the dimension of the data.", 
     "inputs": {
-        "SctkSeuratCluster.raw_counts": {
+        "raw_counts": {
             "description": "The input raw count matrix. Must be an integer-based table.", 
             "name": "Count matrix:", 
             "required": true, 
@@ -13,7 +13,7 @@
                 "many": false
             }
         }, 
-        "SctkSeuratCluster.pca_dims": {
+        "pca_dims": {
             "description": "The number of dimensions to retain in the PCA projection. Fewer dimensions can lose information and skew results.", 
             "name": "Number of PCA dimensions:", 
             "required": false, 
