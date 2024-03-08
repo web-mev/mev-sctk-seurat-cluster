@@ -54,13 +54,13 @@ sce <- SingleCellExperiment(
 # scaled assay and dimension reduction
 # Because Seurat is a 3rd party package, it requires manually calling
 # much of the necessary pre-processing.
-sce <- seuratNormalizeData(inSCE = sce, useAssay = "counts")
-sce <- seuratFindHVG(inSCE = sce, useAssay = "seuratNormData")
-sce <- seuratSCTransform(inSCE = sce, normAssayName = "SCTCounts", useAssay = "counts")
-sce <- seuratPCA(inSCE = sce, useAssay = "SCTCounts", nPCs=DIMS)
+sce <- runSeuratNormalizeData(inSCE = sce, useAssay = "counts")
+sce <- runSeuratFindHVG(inSCE = sce, useAssay = "seuratNormData")
+sce <- runSeuratSCTransform(inSCE = sce, normAssayName = "SCTCounts", useAssay = "counts")
+sce <- runSeuratPCA(inSCE = sce, useAssay = "SCTCounts", nPCs=DIMS)
 
 # Find the clusters with Seurat
-sce <- seuratFindClusters(
+sce <- runSeuratFindClusters(
     inSCE = sce, 
     useAssay = "SCTCounts",
     useReduction = "pca",
